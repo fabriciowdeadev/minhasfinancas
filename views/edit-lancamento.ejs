@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editar Lançamento — Controle Financeiro</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-brand">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
+      <rect x="2" y="5" width="20" height="14" rx="2"/>
+      <line x1="2" y1="10" x2="22" y2="10"/>
+    </svg>
+    Controle Financeiro
+  </div>
+  <div class="nav-links">
+    <a href="/dashboard" class="nav-link">Dashboard</a>
+    <a href="/lancamentos/novo" class="nav-link">+ Lançamento</a>
+    <a href="/configuracoes" class="nav-link">Configurações</a>
+    <a href="/logout" class="nav-link nav-link-danger">Sair</a>
+  </div>
+</nav>
+
+<main class="container">
+  <div class="form-page">
+    <div class="form-card">
+      <div class="form-card-header">
+        <h2>Editar Lançamento <span class="text-muted">#<%= lancamento.id %></span></h2>
+        <a href="/dashboard?mes=<%= mes %>&ano=<%= ano %>" class="btn btn-ghost">← Voltar</a>
+      </div>
+
+      <% if (error) { %>
+        <div class="alert alert-error"><%= error %></div>
+      <% } %>
+
+      <form method="POST" action="/lancamentos/<%= lancamento.id %>/editar" id="lancamentoForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Tipo <span class="required">*</span></label>
+            <select name="Tipo" required>
+              <option value="Debitar"  <%= lancamento.Tipo === 'Debitar'  ? 'selected' : '' %>>↓ Débito</option>
+              <option value="Creditar" <%= lancamento.Tipo === 'Creditar' ? 'selected' : '' %>>↑ Crédito</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Mês de Lançamento <span class="required">*</span></label>
+            <div class="input-row">
+              <select name="mes" required>
+                <% const mesesL = ['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']; %>
+                <% for (let m = 1; m <= 12; m++) { %>
+                  <option value="<%= m %>" <%= mes === m ? 'selected' : '' %>><%= mesesL[m] %></option>
+                <% } %>
+              </select>
+              <input type="number" name="ano" value="<%= ano %>" min="2000" max="2100" required style="width:90px" />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Início do Pagamento</label>
+            <input type="date" name="InicioPagamento"
+                   value="<%= brDateToHtml(lancamento.InicioPagamento) %>" />
+          </div>
+          <div class="form-group">
+            <label>Parcelas</label>
+            <input type="number" name="Parcelas" id="parcelasInput"
+                   value="<%= lancamento.Parcelas || 1 %>" min="1" max="999" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Cartão / Conta</label>
+            <input type="text" name="Cartao_ou_Conta"
+                   value="<%= lancamento.Cartao_ou_Conta || '' %>"
+                   placeholder="Ex: Caixa Black, Salário…" maxlength="100" />
+          </div>
+          <div class="form-group">
+            <label>Grupo / Categoria</label>
+            <input type="text" name="Grupo"
+                   value="<%= lancamento.Grupo || '' %>"
+                   placeholder="Ex: Alimentação, Salário…" maxlength="100" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Observação</label>
+          <textarea name="Observacao" rows="2" maxlength="1000"><%= lancamento.Observacao || '' %></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Valor da Parcela (R$)</label>
+            <input type="number" name="ValorParcela" id="valorParcelaInput"
+                   value="<%= lancamento.ValorParcela || '' %>"
+                   step="0.01" min="0" placeholder="0,00" />
+          </div>
+          <div class="form-group">
+            <label>Valor Total (R$) <span class="required">*</span></label>
+            <input type="number" name="Valor" id="valorInput"
+                   value="<%= lancamento.Valor || '' %>"
+                   step="0.01" min="0" placeholder="0,00" required />
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <a href="/dashboard?mes=<%= mes %>&ano=<%= ano %>" class="btn btn-ghost">Cancelar</a>
+          <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<script>
+  const parcelasEl     = document.getElementById('parcelasInput');
+  const valorParcelaEl = document.getElementById('valorParcelaInput');
+  const valorEl        = document.getElementById('valorInput');
+
+  function calcTotal() {
+    const p = parseFloat(parcelasEl.value) || 1;
+    const v = parseFloat(valorParcelaEl.value);
+    if (!isNaN(v)) {
+      valorEl.value = (p * v).toFixed(2);
+    }
+  }
+
+  parcelasEl.addEventListener('input', calcTotal);
+  valorParcelaEl.addEventListener('input', calcTotal);
+</script>
+
+</body>
+</html>

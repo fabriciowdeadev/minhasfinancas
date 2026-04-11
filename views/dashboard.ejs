@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Controle Financeiro</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+<!-- Navegação -->
+<nav class="navbar">
+  <div class="nav-brand">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
+      <rect x="2" y="5" width="20" height="14" rx="2"/>
+      <line x1="2" y1="10" x2="22" y2="10"/>
+    </svg>
+    Controle Financeiro
+  </div>
+  <div class="nav-links">
+    <a href="/dashboard" class="nav-link active">Dashboard</a>
+    <a href="/lancamentos/novo" class="nav-link">+ Lançamento</a>
+    <a href="/configuracoes" class="nav-link">Configurações</a>
+    <a href="/logout" class="nav-link nav-link-danger">Sair</a>
+  </div>
+</nav>
+
+<main class="container">
+
+  <!-- Filtro de mês -->
+  <div class="filter-bar">
+    <form method="GET" action="/dashboard" class="filter-form">
+      <div class="filter-group">
+        <label>Mês</label>
+        <select name="mes">
+          <% const mesesNomes = ['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']; %>
+          <% for (let m = 1; m <= 12; m++) { %>
+            <option value="<%= m %>" <%= filterMes === m ? 'selected' : '' %>><%= mesesNomes[m] %></option>
+          <% } %>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Ano</label>
+        <input type="number" name="ano" value="<%= filterAno %>" min="2000" max="2100" />
+      </div>
+      <button type="submit" class="btn btn-secondary">Filtrar</button>
+      <a href="/lancamentos/novo?mes=<%= filterMes %>&ano=<%= filterAno %>" class="btn btn-primary">+ Novo Lançamento</a>
+    </form>
+    <div class="filter-period">
+      <%
+        const mesesNomesCompletos = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+                                     'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+      %>
+      <span class="period-label"><%= mesesNomesCompletos[filterMes] %> / <%= filterAno %></span>
+    </div>
+  </div>
+
+  <!-- Cards de resumo -->
+  <div class="summary-cards">
+    <div class="card card-green">
+      <div class="card-icon">↑</div>
+      <div class="card-content">
+        <div class="card-label">Total Créditos</div>
+        <div class="card-value"><%= formatBRL(totalCreditos) %></div>
+      </div>
+    </div>
+    <div class="card card-red">
+      <div class="card-icon">↓</div>
+      <div class="card-content">
+        <div class="card-label">Total Débitos</div>
+        <div class="card-value"><%= formatBRL(totalDebitos) %></div>
+      </div>
+    </div>
+    <div class="card <%= saldo >= 0 ? 'card-blue' : 'card-orange' %>">
+      <div class="card-icon">=</div>
+      <div class="card-content">
+        <div class="card-label">Saldo do Mês</div>
+        <div class="card-value"><%= formatBRL(saldo) %></div>
+      </div>
+    </div>
+    <div class="card card-neutral">
+      <div class="card-icon">#</div>
+      <div class="card-content">
+        <div class="card-label">Lançamentos</div>
+        <div class="card-value"><%= lancamentos.length %></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabela de lançamentos -->
+  <div class="table-section">
+    <div class="section-header">
+      <h2>Lançamentos</h2>
+      <span class="badge"><%= lancamentos.length %> registros</span>
+    </div>
+
+    <% if (lancamentos.length === 0) { %>
+      <div class="empty-state">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <line x1="9" y1="9" x2="15" y2="9"/>
+          <line x1="9" y1="12" x2="15" y2="12"/>
+          <line x1="9" y1="15" x2="12" y2="15"/>
+        </svg>
+        <p>Nenhum lançamento neste mês.</p>
+        <a href="/lancamentos/novo" class="btn btn-primary">Adicionar primeiro lançamento</a>
+      </div>
+    <% } else { %>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Mês</th>
+              <th>Início Pag.</th>
+              <th>Parcelas</th>
+              <th>Cartão / Conta</th>
+              <th>Grupo</th>
+              <th>Observação</th>
+              <th class="text-right">Vlr. Parcela</th>
+              <th class="text-right">Valor Total</th>
+              <th class="text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% lancamentos.forEach(l => { %>
+              <% const { month, year } = parseMesLancamento(l.MesLancamento); %>
+              <tr>
+                <td>
+                  <span class="badge-tipo <%= l.Tipo === 'Creditar' ? 'badge-creditar' : 'badge-debitar' %>">
+                    <%= l.Tipo === 'Creditar' ? '↑ Crédito' : '↓ Débito' %>
+                  </span>
+                </td>
+                <td class="text-muted"><%= String(month).padStart(2,'0') %>/<%= year %></td>
+                <td class="text-muted"><%= l.InicioPagamento || '—' %></td>
+                <td class="text-center"><%= l.Parcelas || 1 %>x</td>
+                <td><%= l.Cartao_ou_Conta || '—' %></td>
+                <td>
+                  <% if (l.Grupo) { %>
+                    <span class="tag"><%= l.Grupo %></span>
+                  <% } else { %>
+                    <span class="text-muted">—</span>
+                  <% } %>
+                </td>
+                <td class="obs-cell" title="<%= l.Observacao || '' %>">
+                  <%= l.Observacao ? (l.Observacao.length > 30 ? l.Observacao.slice(0,30) + '…' : l.Observacao) : '—' %>
+                </td>
+                <td class="text-right text-muted"><%= l.ValorParcela ? formatBRL(l.ValorParcela) : '—' %></td>
+                <td class="text-right font-bold <%= l.Tipo === 'Creditar' ? 'text-green' : 'text-red' %>">
+                  <%= formatBRL(l.Valor) %>
+                </td>
+                <td class="text-center actions-cell">
+                  <a href="/lancamentos/<%= l.id %>/editar" class="btn-icon btn-edit" title="Editar">✏</a>
+                  <form method="POST" action="/lancamentos/<%= l.id %>/deletar"
+                        onsubmit="return confirm('Excluir este lançamento?')" style="display:inline">
+                    <button type="submit" class="btn-icon btn-delete" title="Excluir">✕</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+          <tfoot>
+            <tr class="totals-row">
+              <td colspan="7" class="text-right text-muted">Totais do mês:</td>
+              <td class="text-right text-muted">—</td>
+              <td class="text-right font-bold">
+                <span class="text-green">C: <%= formatBRL(totalCreditos) %></span><br/>
+                <span class="text-red">D: <%= formatBRL(totalDebitos) %></span>
+              </td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Resumo por grupo -->
+  <% if (grupos.length > 0) { %>
+  <div class="table-section">
+    <div class="section-header">
+      <h2>Resumo por Grupo</h2>
+    </div>
+    <div class="grupos-grid">
+      <%
+        const gruposMap = {};
+        grupos.forEach(g => {
+          const nome = g.Grupo || 'Sem grupo';
+          if (!gruposMap[nome]) gruposMap[nome] = { credito: 0, debito: 0 };
+          if (g.Tipo === 'Creditar') gruposMap[nome].credito += parseFloat(g.total);
+          else                       gruposMap[nome].debito  += parseFloat(g.total);
+        });
+        const maxVal = Math.max(...Object.values(gruposMap).map(g => g.credito + g.debito), 1);
+      %>
+      <% Object.entries(gruposMap).forEach(([nome, vals]) => { %>
+        <div class="grupo-card">
+          <div class="grupo-nome"><%= nome %></div>
+          <% if (vals.credito > 0) { %>
+            <div class="grupo-bar-row">
+              <span class="text-green">Crédito</span>
+              <div class="bar-track">
+                <div class="bar-fill bar-green" style="width: <%= Math.round(vals.credito / maxVal * 100) %>%"></div>
+              </div>
+              <span class="bar-val text-green"><%= formatBRL(vals.credito) %></span>
+            </div>
+          <% } %>
+          <% if (vals.debito > 0) { %>
+            <div class="grupo-bar-row">
+              <span class="text-red">Débito</span>
+              <div class="bar-track">
+                <div class="bar-fill bar-red" style="width: <%= Math.round(vals.debito / maxVal * 100) %>%"></div>
+              </div>
+              <span class="bar-val text-red"><%= formatBRL(vals.debito) %></span>
+            </div>
+          <% } %>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+  <% } %>
+
+</main>
+
+</body>
+</html>

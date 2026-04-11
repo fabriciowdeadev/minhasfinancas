@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configurações — Controle Financeiro</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-brand">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
+      <rect x="2" y="5" width="20" height="14" rx="2"/>
+      <line x1="2" y1="10" x2="22" y2="10"/>
+    </svg>
+    Controle Financeiro
+  </div>
+  <div class="nav-links">
+    <a href="/dashboard" class="nav-link">Dashboard</a>
+    <a href="/lancamentos/novo" class="nav-link">+ Lançamento</a>
+    <a href="/configuracoes" class="nav-link active">Configurações</a>
+    <a href="/logout" class="nav-link nav-link-danger">Sair</a>
+  </div>
+</nav>
+
+<main class="container">
+  <div class="form-page">
+    <div class="form-card">
+      <div class="form-card-header">
+        <h2>Configurações</h2>
+        <a href="/dashboard" class="btn btn-ghost">← Voltar</a>
+      </div>
+
+      <h3 class="section-title">Alterar Senha</h3>
+
+      <% if (error) { %>
+        <div class="alert alert-error"><%= error %></div>
+      <% } %>
+      <% if (success) { %>
+        <div class="alert alert-success"><%= success %></div>
+      <% } %>
+
+      <form method="POST" action="/configuracoes/senha">
+        <div class="form-group">
+          <label>Senha atual</label>
+          <input type="password" name="senhaAtual" required autofocus
+                 placeholder="Digite sua senha atual" maxlength="72" />
+        </div>
+        <div class="form-group">
+          <label>Nova senha <span class="text-muted">(mín. 6 caracteres)</span></label>
+          <input type="password" name="novaSenha" required
+                 placeholder="Nova senha" minlength="6" maxlength="72" />
+        </div>
+        <div class="form-group">
+          <label>Confirmar nova senha</label>
+          <input type="password" name="confirmarSenha" required
+                 placeholder="Repita a nova senha" minlength="6" maxlength="72" />
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Alterar Senha</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+
+</body>
+</html>
