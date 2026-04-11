@@ -243,19 +243,20 @@ app.get('/dashboard', requireAuth, async (req, res) => {
       meses.unshift({ MesLancamento: mesAtualVal });
     }
 
-    // Totais
+    // Totais do mês — usa ValorParcela (mensal) quando disponível,
+    // caso contrário usa Valor (para lançamentos sem parcelamento)
     let totalCreditos = 0;
     let totalDebitos  = 0;
     lancamentos.forEach(l => {
-      const v = parseFloat(l.Valor) || 0;
+      const v = parseFloat(l.ValorParcela) || parseFloat(l.Valor) || 0;
       if (l.Tipo === 'Creditar') totalCreditos += v;
       else                       totalDebitos  += v;
     });
     const saldo = totalCreditos - totalDebitos;
 
-    // Resumo por grupo
+    // Resumo por grupo (também usa ValorParcela quando disponível)
     const [grupos] = await pool.query(
-      `SELECT Grupo, Tipo, SUM(Valor) AS total
+      `SELECT Grupo, Tipo, SUM(COALESCE(ValorParcela, Valor)) AS total
        FROM lancamentos
        WHERE UserPasswordHash = ? AND MesLancamento = ?
        GROUP BY Grupo, Tipo
