@@ -16,13 +16,27 @@
     </svg>
     Controle Financeiro
   </div>
-  <div class="nav-links">
+  <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="navLinks">
     <a href="/dashboard" class="nav-link">Dashboard</a>
     <a href="/lancamentos/novo" class="nav-link">+ Lançamento</a>
     <a href="/configuracoes" class="nav-link active">Configurações</a>
     <a href="/logout" class="nav-link nav-link-danger">Sair</a>
   </div>
 </nav>
+<script>
+  (function(){
+    var btn = document.getElementById('navToggle');
+    var menu = document.getElementById('navLinks');
+    btn.addEventListener('click', function(){
+      var open = menu.classList.toggle('open');
+      btn.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open);
+    });
+  })();
+</script>
 
 <main class="container">
   <div class="form-page">
