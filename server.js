@@ -215,36 +215,48 @@ app.get('/dashboard', requireAuth, async (req, res) => {
     let filterMes = req.query.mes ? parseInt(req.query.mes) : null;
     let filterAno = req.query.ano ? parseInt(req.query.ano) : null;
 
-    // Se nenhum filtro, usa o mês atual
     if (!filterMes) filterMes = now.getMonth() + 1;
     if (!filterAno) filterAno = now.getFullYear();
 
-    const mesLancamentoFilter = buildMesLancamento(filterMes, filterAno);
+    // Índice linear do mês filtrado (para comparação entre meses)
+    const filterIndex = filterAno * 12 + (filterMes - 1);
 
-    // Transações do mês filtrado
-    const [lancamentos] = await pool.query(
-      `SELECT * FROM lancamentos
-       WHERE UserPasswordHash = ? AND MesLancamento = ?
-       ORDER BY created_at DESC`,
-      [userHash, mesLancamentoFilter]
-    );
-
-    // Meses disponíveis para o filtro (todos os meses que têm lançamentos)
-    const [meses] = await pool.query(
-      `SELECT DISTINCT MesLancamento FROM lancamentos
-       WHERE UserPasswordHash = ?
-       ORDER BY MesLancamento DESC`,
+    // Busca TODOS os lançamentos do usuário
+    const [allLancamentos] = await pool.query(
+      `SELECT * FROM lancamentos WHERE UserPasswordHash = ? ORDER BY created_at DESC`,
       [userHash]
     );
 
-    // Garantir que o mês atual sempre apareça no select
-    const mesAtualVal = buildMesLancamento(now.getMonth() + 1, now.getFullYear());
-    if (!meses.find(m => m.MesLancamento === mesAtualVal)) {
-      meses.unshift({ MesLancamento: mesAtualVal });
-    }
+    // Determina quais lançamentos estão ativos no mês filtrado
+    // baseando-se em InicioPagamento + Parcelas (não em MesLancamento)
+    const lancamentos = allLancamentos.map(l => {
+      let startMonth, startYear;
 
-    // Totais do mês — usa ValorParcela (mensal) quando disponível,
-    // caso contrário usa Valor (para lançamentos sem parcelamento)
+      if (l.InicioPagamento) {
+        // Formato armazenado: DD/MM/YYYY
+        const parts = l.InicioPagamento.split('/');
+        startMonth = parseInt(parts[1], 10);
+        startYear  = parseInt(parts[2], 10);
+      } else {
+        // Sem data de início: usa o próprio mês de lançamento como início
+        startMonth = Math.floor(l.MesLancamento / 10000);
+        startYear  = l.MesLancamento % 10000;
+      }
+
+      const startIndex    = startYear * 12 + (startMonth - 1);
+      const parcelasTotal = parseInt(l.Parcelas) || 1;
+      const endIndex      = startIndex + parcelasTotal - 1;
+
+      // Descarta se o mês filtrado está fora do período de pagamento
+      if (filterIndex < startIndex || filterIndex > endIndex) return null;
+
+      const parcelaAtual      = filterIndex - startIndex + 1;
+      const parcelasRestantes = parcelasTotal - parcelaAtual; // restantes APÓS este mês
+
+      return { ...l, parcelaAtual, parcelasRestantes, parcelasTotal };
+    }).filter(Boolean);
+
+    // Totais do mês (usa ValorParcela quando disponível)
     let totalCreditos = 0;
     let totalDebitos  = 0;
     lancamentos.forEach(l => {
@@ -254,23 +266,22 @@ app.get('/dashboard', requireAuth, async (req, res) => {
     });
     const saldo = totalCreditos - totalDebitos;
 
-    // Resumo por grupo (também usa ValorParcela quando disponível)
-    const [grupos] = await pool.query(
-      `SELECT Grupo, Tipo, SUM(COALESCE(ValorParcela, Valor)) AS total
-       FROM lancamentos
-       WHERE UserPasswordHash = ? AND MesLancamento = ?
-       GROUP BY Grupo, Tipo
-       ORDER BY total DESC`,
-      [userHash, mesLancamentoFilter]
-    );
+    // Resumo por grupo (calculado em JS junto com os lancamentos filtrados)
+    const gruposMap = {};
+    lancamentos.forEach(l => {
+      const nome = l.Grupo || 'Sem grupo';
+      const v    = parseFloat(l.ValorParcela) || parseFloat(l.Valor) || 0;
+      if (!gruposMap[nome]) gruposMap[nome] = { credito: 0, debito: 0 };
+      if (l.Tipo === 'Creditar') gruposMap[nome].credito += v;
+      else                       gruposMap[nome].debito  += v;
+    });
 
     res.render('dashboard', {
       lancamentos,
       totalCreditos,
       totalDebitos,
       saldo,
-      meses,
-      grupos,
+      gruposMap,
       filterMes,
       filterAno,
       parseMesLancamento

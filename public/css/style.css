@@ -585,6 +585,30 @@ textarea { resize: vertical; min-height: 60px; }
 .required    { color: var(--red); }
 .obs-cell    { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
+/* ── Installment progress ─────────────────────────────────────────────────── */
+.parcela-cell { white-space: nowrap; }
+.parcela-prog {
+  display: inline-block;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.parcela-rest {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+.tag-ultima {
+  display: inline-block;
+  margin-left: 6px;
+  background: var(--green-dim);
+  color: var(--green);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
 /* ── Scrollbar (Webkit) ───────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }

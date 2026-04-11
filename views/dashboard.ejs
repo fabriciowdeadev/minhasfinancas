@@ -147,7 +147,14 @@
                 </td>
                 <td class="text-muted"><%= String(month).padStart(2,'0') %>/<%= year %></td>
                 <td class="text-muted"><%= l.InicioPagamento || '—' %></td>
-                <td class="text-center"><%= l.Parcelas || 1 %>x</td>
+                <td class="text-center parcela-cell">
+                  <span class="parcela-prog"><%= l.parcelaAtual %>/<%= l.parcelasTotal %></span>
+                  <% if (l.parcelasRestantes === 0) { %>
+                    <span class="tag-ultima">última</span>
+                  <% } else { %>
+                    <span class="parcela-rest"><%= l.parcelasRestantes %> rest.</span>
+                  <% } %>
+                </td>
                 <td><%= l.Cartao_ou_Conta || '—' %></td>
                 <td>
                   <% if (l.Grupo) { %>
@@ -190,20 +197,13 @@
   </div>
 
   <!-- Resumo por grupo -->
-  <% if (grupos.length > 0) { %>
+  <% if (Object.keys(gruposMap).length > 0) { %>
   <div class="table-section">
     <div class="section-header">
       <h2>Resumo por Grupo</h2>
     </div>
     <div class="grupos-grid">
       <%
-        const gruposMap = {};
-        grupos.forEach(g => {
-          const nome = g.Grupo || 'Sem grupo';
-          if (!gruposMap[nome]) gruposMap[nome] = { credito: 0, debito: 0 };
-          if (g.Tipo === 'Creditar') gruposMap[nome].credito += parseFloat(g.total);
-          else                       gruposMap[nome].debito  += parseFloat(g.total);
-        });
         const maxVal = Math.max(...Object.values(gruposMap).map(g => g.credito + g.debito), 1);
       %>
       <% Object.entries(gruposMap).forEach(([nome, vals]) => { %>
