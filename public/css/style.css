@@ -304,6 +304,15 @@ a:hover { text-decoration: underline; }
   border-bottom: 1px solid var(--border);
 }
 
+.th-sort {
+  cursor: pointer;
+  user-select: none;
+}
+.th-sort:hover { color: var(--text); background: var(--border); }
+.th-sorted { color: var(--blue) !important; }
+
+.sort-icon { font-style: normal; font-size: 0.65rem; }
+
 .data-table td {
   padding: 11px 14px;
   border-bottom: 1px solid rgba(51,65,85,.5);

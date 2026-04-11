@@ -124,15 +124,15 @@
         <table class="data-table">
           <thead>
             <tr>
-              <th>Tipo</th>
-              <th>Mês</th>
-              <th>Início Pag.</th>
-              <th>Parcelas</th>
-              <th>Cartão / Conta</th>
-              <th>Grupo</th>
-              <th>Observação</th>
-              <th class="text-right">Vlr. Parcela</th>
-              <th class="text-right">Valor Total</th>
+              <th data-col="0" class="th-sort">Tipo <span class="sort-icon"></span></th>
+              <th data-col="1" class="th-sort">Mês <span class="sort-icon"></span></th>
+              <th data-col="2" class="th-sort">Início Pag. <span class="sort-icon"></span></th>
+              <th data-col="3" class="th-sort">Parcelas <span class="sort-icon"></span></th>
+              <th data-col="4" class="th-sort">Cartão / Conta <span class="sort-icon"></span></th>
+              <th data-col="5" class="th-sort">Grupo <span class="sort-icon"></span></th>
+              <th data-col="6" class="th-sort">Observação <span class="sort-icon"></span></th>
+              <th data-col="7" class="th-sort text-right">Vlr. Parcela <span class="sort-icon"></span></th>
+              <th data-col="8" class="th-sort text-right">Valor Total <span class="sort-icon"></span></th>
               <th class="text-center">Ações</th>
             </tr>
           </thead>
@@ -182,12 +182,12 @@
           </tbody>
           <tfoot>
             <tr class="totals-row">
-              <td colspan="7" class="text-right text-muted">Totais do mês:</td>
-              <td class="text-right text-muted">—</td>
+              <td colspan="7" class="text-right text-muted">Totais do mês (parcelas):</td>
               <td class="text-right font-bold">
                 <span class="text-green">C: <%= formatBRL(totalCreditos) %></span><br/>
                 <span class="text-red">D: <%= formatBRL(totalDebitos) %></span>
               </td>
+              <td class="text-right text-muted">—</td>
               <td></td>
             </tr>
           </tfoot>
@@ -234,6 +234,68 @@
   <% } %>
 
 </main>
+
+<script>
+(function () {
+  var table   = document.querySelector('.data-table');
+  if (!table) return;
+
+  var tbody   = table.querySelector('tbody');
+  var headers = table.querySelectorAll('th.th-sort');
+  var sortState = { col: -1, asc: true };
+
+  // Extrai valor de célula para comparação
+  function cellValue(tr, col) {
+    var td = tr.querySelectorAll('td')[col];
+    if (!td) return '';
+    var text = td.dataset.val !== undefined ? td.dataset.val : td.innerText.trim();
+    return text;
+  }
+
+  function sortTable(col) {
+    var asc = sortState.col === col ? !sortState.asc : true;
+    sortState = { col: col, asc: asc };
+
+    var rows = Array.from(tbody.querySelectorAll('tr'));
+    rows.sort(function (a, b) {
+      var va = cellValue(a, col);
+      var vb = cellValue(b, col);
+      // Tenta comparação numérica (remove R$, pontos, vírgula)
+      var na = parseFloat(va.replace(/[^0-9,\-]/g, '').replace(',', '.'));
+      var nb = parseFloat(vb.replace(/[^0-9,\-]/g, '').replace(',', '.'));
+      var cmp;
+      if (!isNaN(na) && !isNaN(nb)) {
+        cmp = na - nb;
+      } else {
+        cmp = va.localeCompare(vb, 'pt-BR', { sensitivity: 'base' });
+      }
+      return asc ? cmp : -cmp;
+    });
+
+    rows.forEach(function (r) { tbody.appendChild(r); });
+
+    // Atualiza ícones
+    headers.forEach(function (th) {
+      var icon = th.querySelector('.sort-icon');
+      if (!icon) return;
+      var c = parseInt(th.dataset.col);
+      if (c === col) {
+        icon.textContent = asc ? ' ▲' : ' ▼';
+        th.classList.add('th-sorted');
+      } else {
+        icon.textContent = '';
+        th.classList.remove('th-sorted');
+      }
+    });
+  }
+
+  headers.forEach(function (th) {
+    th.addEventListener('click', function () {
+      sortTable(parseInt(th.dataset.col));
+    });
+  });
+})();
+</script>
 
 </body>
 </html>
