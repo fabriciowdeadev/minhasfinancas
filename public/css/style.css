@@ -216,6 +216,31 @@ a:hover { text-decoration: underline; }
   color: var(--muted);
 }
 
+@media (max-width: 640px) {
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .filter-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    align-items: end;
+  }
+
+  /* Botões do filtro ocupam linha inteira */
+  .filter-form .btn {
+    grid-column: span 1;
+  }
+
+  .period-label {
+    font-size: 1rem;
+    text-align: center;
+  }
+}
+
 /* ── Summary cards ────────────────────────────────────────────────────────── */
 .summary-cards {
   display: grid;
@@ -284,7 +309,24 @@ a:hover { text-decoration: underline; }
 
 .section-header h2 { font-size: 1rem; font-weight: 600; }
 
-.table-wrapper { overflow-x: auto; }
+.table-wrapper { overflow-x: visible; }
+
+/* Colunas visíveis apenas no desktop */
+@media (max-width: 640px) {
+  .col-desktop { display: none; }
+
+  .table-wrapper { overflow-x: auto; }
+
+  .data-table th,
+  .data-table td {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
+
+  .obs-cell {
+    max-width: 100px;
+  }
+}
 
 .data-table {
   width: 100%;
