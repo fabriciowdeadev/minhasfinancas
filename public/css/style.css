@@ -252,8 +252,22 @@ a:hover { text-decoration: underline; }
 @media (max-width: 640px) {
   .summary-cards {
     grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .card {
+    padding: 12px;
     gap: 10px;
   }
+
+  .card-icon {
+    font-size: 1.2rem;
+    min-width: 22px;
+  }
+
+  .card-label { font-size: 0.68rem; }
+  .card-value { font-size: 0.95rem; word-break: break-word; }
 }
 
 .card {
@@ -315,16 +329,56 @@ a:hover { text-decoration: underline; }
 @media (max-width: 640px) {
   .col-desktop { display: none; }
 
-  .table-wrapper { overflow-x: auto; }
-
-  .data-table th,
-  .data-table td {
-    padding: 8px 10px;
-    font-size: 0.8rem;
+  /* A tabela deve caber sem scroll — sem overflow-x no wrapper */
+  .table-wrapper {
+    overflow-x: visible;
+    width: 100%;
   }
 
+  .data-table {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  /* Remove nowrap dos headers no mobile para evitar tabela larga */
+  .data-table th {
+    white-space: normal;
+    word-break: break-word;
+    padding: 8px 7px;
+    font-size: 0.65rem;
+  }
+
+  .data-table td {
+    padding: 8px 7px;
+    font-size: 0.8rem;
+    word-break: break-word;
+  }
+
+  /* Larguras fixas das colunas visíveis no mobile:
+     Parcelas | Cartão/Conta | Grupo | Obs | Vlr.Parcela | Ações */
+  .data-table th:nth-child(4),
+  .data-table td:nth-child(4) { width: 14%; }
+
+  .data-table th:nth-child(5),
+  .data-table td:nth-child(5) { width: 18%; }
+
+  .data-table th:nth-child(6),
+  .data-table td:nth-child(6) { width: 14%; }
+
+  .data-table th:nth-child(7),
+  .data-table td:nth-child(7) { width: 20%; }
+
+  .data-table th:nth-child(8),
+  .data-table td:nth-child(8) { width: 18%; }
+
+  .data-table th:nth-child(10),
+  .data-table td:nth-child(10) { width: 16%; }
+
   .obs-cell {
-    max-width: 100px;
+    max-width: unset;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
   }
 }
 
