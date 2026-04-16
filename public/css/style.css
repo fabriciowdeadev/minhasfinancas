@@ -257,15 +257,15 @@ a:hover { text-decoration: underline; }
   }
 
   .card {
-    padding: 8px 6px;
-    gap: 4px;
+    padding: 6px 5px;
+    gap: 5px;
     min-width: 0;
     overflow: hidden;
   }
 
   .card-icon {
-    font-size: 0.9rem;
-    min-width: 14px;
+    font-size: 0.7rem;
+    min-width: 10px;
     flex-shrink: 0;
   }
 
@@ -274,8 +274,8 @@ a:hover { text-decoration: underline; }
     overflow: hidden;
   }
 
-  .card-label { font-size: 0.62rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .card-value { font-size: 0.82rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card-label { font-size: 0.58rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card-value { font-size: 0.75rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }
 
 .card {
