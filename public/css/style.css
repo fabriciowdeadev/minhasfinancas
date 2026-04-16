@@ -257,17 +257,17 @@ a:hover { text-decoration: underline; }
   }
 
   .card {
-    padding: 12px;
-    gap: 10px;
+    padding: 10px 8px;
+    gap: 6px;
   }
 
   .card-icon {
-    font-size: 1.2rem;
-    min-width: 22px;
+    font-size: 1rem;
+    min-width: 16px;
   }
 
-  .card-label { font-size: 0.68rem; }
-  .card-value { font-size: 0.95rem; word-break: break-word; }
+  .card-label { font-size: 0.65rem; }
+  .card-value { font-size: 0.85rem; font-weight: 700; white-space: nowrap; }
 }
 
 .card {
