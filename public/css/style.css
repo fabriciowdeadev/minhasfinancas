@@ -270,98 +270,6 @@ a:hover { text-decoration: underline; }
   .card-value { font-size: 0.95rem; word-break: break-word; }
 }
 
-/* ── Mobile lancamento cards ──────────────────────────────────────────────── */
-.mobile-cards {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 12px;
-}
-
-.m-card {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-  border-left: 4px solid transparent;
-}
-.m-card-creditar { border-left-color: var(--green); }
-.m-card-debitar  { border-left-color: var(--red); }
-
-.m-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--border);
-}
-
-.m-card-valor {
-  font-size: 1.05rem;
-  font-weight: 700;
-}
-
-.m-card-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
-  padding: 8px 0;
-}
-
-.m-card-item {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 6px 14px;
-}
-
-.m-card-item-full {
-  grid-column: span 2;
-}
-
-.m-label {
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: .05em;
-  color: var(--muted);
-}
-
-.m-value {
-  font-size: 0.875rem;
-  color: var(--text);
-  word-break: break-word;
-}
-
-.m-card-actions {
-  display: flex;
-  gap: 8px;
-  padding: 8px 14px 12px;
-  border-top: 1px solid var(--border);
-}
-
-.btn-sm {
-  padding: 5px 12px;
-  font-size: 0.8rem;
-}
-
-.btn-danger {
-  background: var(--red-dim);
-  color: var(--red);
-  border: 1px solid var(--red-dim);
-}
-.btn-danger:hover { background: var(--red); color: #fff; }
-
-.m-totals {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px 14px;
-  font-weight: 700;
-  font-size: 0.9rem;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-}
-
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -417,13 +325,22 @@ a:hover { text-decoration: underline; }
 
 .table-wrapper { overflow-x: auto; }
 
-/* Visibilidade desktop vs mobile */
-.desktop-only { display: block; }
-.mobile-only  { display: none; }
-
+/* Oculta colunas no mobile */
 @media (max-width: 640px) {
-  .desktop-only { display: none; }
-  .mobile-only  { display: block; }
+  .hide-mobile { display: none; }
+
+  .data-table th,
+  .data-table td { padding: 7px 6px; font-size: 0.78rem; }
+
+  .data-table th { white-space: normal; }
+
+  .obs-cell { max-width: 80px; }
+
+  .parcela-cell { white-space: nowrap; }
+
+  .tag { padding: 1px 5px; font-size: 0.7rem; }
+
+  .btn-icon { width: 24px; height: 24px; font-size: 0.72rem; }
 }
 
 .data-table {
@@ -437,8 +354,8 @@ a:hover { text-decoration: underline; }
   color: var(--muted);
   font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: .06em;
-  padding: 10px 14px;
+  letter-spacing: .04em;
+  padding: 8px 10px;
   text-align: left;
   white-space: nowrap;
   border-bottom: 1px solid var(--border);
@@ -454,7 +371,7 @@ a:hover { text-decoration: underline; }
 .sort-icon { font-style: normal; font-size: 0.65rem; }
 
 .data-table td {
-  padding: 11px 14px;
+  padding: 8px 10px;
   border-bottom: 1px solid rgba(51,65,85,.5);
   vertical-align: middle;
 }
@@ -463,7 +380,7 @@ a:hover { text-decoration: underline; }
 .data-table tbody tr:last-child td { border-bottom: none; }
 
 .data-table tfoot td {
-  padding: 10px 14px;
+  padding: 8px 10px;
   border-top: 2px solid var(--border);
   background: var(--surface2);
 }
