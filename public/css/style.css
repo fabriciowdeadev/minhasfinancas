@@ -270,6 +270,98 @@ a:hover { text-decoration: underline; }
   .card-value { font-size: 0.95rem; word-break: break-word; }
 }
 
+/* ── Mobile lancamento cards ──────────────────────────────────────────────── */
+.mobile-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+}
+
+.m-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border-left: 4px solid transparent;
+}
+.m-card-creditar { border-left-color: var(--green); }
+.m-card-debitar  { border-left-color: var(--red); }
+
+.m-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.m-card-valor {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.m-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  padding: 8px 0;
+}
+
+.m-card-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 14px;
+}
+
+.m-card-item-full {
+  grid-column: span 2;
+}
+
+.m-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--muted);
+}
+
+.m-value {
+  font-size: 0.875rem;
+  color: var(--text);
+  word-break: break-word;
+}
+
+.m-card-actions {
+  display: flex;
+  gap: 8px;
+  padding: 8px 14px 12px;
+  border-top: 1px solid var(--border);
+}
+
+.btn-sm {
+  padding: 5px 12px;
+  font-size: 0.8rem;
+}
+
+.btn-danger {
+  background: var(--red-dim);
+  color: var(--red);
+  border: 1px solid var(--red-dim);
+}
+.btn-danger:hover { background: var(--red); color: #fff; }
+
+.m-totals {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 14px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -323,63 +415,15 @@ a:hover { text-decoration: underline; }
 
 .section-header h2 { font-size: 1rem; font-weight: 600; }
 
-.table-wrapper { overflow-x: visible; }
+.table-wrapper { overflow-x: auto; }
 
-/* Colunas visíveis apenas no desktop */
+/* Visibilidade desktop vs mobile */
+.desktop-only { display: block; }
+.mobile-only  { display: none; }
+
 @media (max-width: 640px) {
-  .col-desktop { display: none; }
-
-  /* A tabela deve caber sem scroll — sem overflow-x no wrapper */
-  .table-wrapper {
-    overflow-x: visible;
-    width: 100%;
-  }
-
-  .data-table {
-    table-layout: fixed;
-    width: 100%;
-  }
-
-  /* Remove nowrap dos headers no mobile para evitar tabela larga */
-  .data-table th {
-    white-space: normal;
-    word-break: break-word;
-    padding: 8px 7px;
-    font-size: 0.65rem;
-  }
-
-  .data-table td {
-    padding: 8px 7px;
-    font-size: 0.8rem;
-    word-break: break-word;
-  }
-
-  /* Larguras fixas das colunas visíveis no mobile:
-     Parcelas | Cartão/Conta | Grupo | Obs | Vlr.Parcela | Ações */
-  .data-table th:nth-child(4),
-  .data-table td:nth-child(4) { width: 14%; }
-
-  .data-table th:nth-child(5),
-  .data-table td:nth-child(5) { width: 18%; }
-
-  .data-table th:nth-child(6),
-  .data-table td:nth-child(6) { width: 14%; }
-
-  .data-table th:nth-child(7),
-  .data-table td:nth-child(7) { width: 20%; }
-
-  .data-table th:nth-child(8),
-  .data-table td:nth-child(8) { width: 18%; }
-
-  .data-table th:nth-child(10),
-  .data-table td:nth-child(10) { width: 16%; }
-
-  .obs-cell {
-    max-width: unset;
-    white-space: normal;
-    overflow: visible;
-    text-overflow: unset;
-  }
+  .desktop-only { display: none; }
+  .mobile-only  { display: block; }
 }
 
 .data-table {

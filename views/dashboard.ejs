@@ -120,19 +120,21 @@
         <a href="/lancamentos/novo" class="btn btn-primary">Adicionar primeiro lançamento</a>
       </div>
     <% } else { %>
-      <div class="table-wrapper">
+
+      <!-- Tabela Desktop -->
+      <div class="table-wrapper desktop-only">
         <table class="data-table">
           <thead>
             <tr>
-              <th data-col="0" class="th-sort col-desktop">Tipo <span class="sort-icon"></span></th>
-              <th data-col="1" class="th-sort col-desktop">Mês <span class="sort-icon"></span></th>
-              <th data-col="2" class="th-sort col-desktop">Início Pag. <span class="sort-icon"></span></th>
+              <th data-col="0" class="th-sort">Tipo <span class="sort-icon"></span></th>
+              <th data-col="1" class="th-sort">Mês <span class="sort-icon"></span></th>
+              <th data-col="2" class="th-sort">Início Pag. <span class="sort-icon"></span></th>
               <th data-col="3" class="th-sort">Parcelas <span class="sort-icon"></span></th>
               <th data-col="4" class="th-sort">Cartão / Conta <span class="sort-icon"></span></th>
               <th data-col="5" class="th-sort">Grupo <span class="sort-icon"></span></th>
               <th data-col="6" class="th-sort">Observação <span class="sort-icon"></span></th>
               <th data-col="7" class="th-sort text-right">Vlr. Parcela <span class="sort-icon"></span></th>
-              <th data-col="8" class="th-sort text-right col-desktop">Valor Total <span class="sort-icon"></span></th>
+              <th data-col="8" class="th-sort text-right">Valor Total <span class="sort-icon"></span></th>
               <th class="text-center">Ações</th>
             </tr>
           </thead>
@@ -140,13 +142,13 @@
             <% lancamentos.forEach(l => { %>
               <% const { month, year } = parseMesLancamento(l.MesLancamento); %>
               <tr>
-                <td class="col-desktop">
+                <td>
                   <span class="badge-tipo <%= l.Tipo === 'Creditar' ? 'badge-creditar' : 'badge-debitar' %>">
                     <%= l.Tipo === 'Creditar' ? '↑ Crédito' : '↓ Débito' %>
                   </span>
                 </td>
-                <td class="text-muted col-desktop"><%= String(month).padStart(2,'0') %>/<%= year %></td>
-                <td class="text-muted col-desktop"><%= l.InicioPagamento || '—' %></td>
+                <td class="text-muted"><%= String(month).padStart(2,'0') %>/<%= year %></td>
+                <td class="text-muted"><%= l.InicioPagamento || '—' %></td>
                 <td class="text-center parcela-cell">
                   <span class="parcela-prog"><%= l.parcelaAtual %>/<%= l.parcelasTotal %></span>
                   <% if (l.parcelasRestantes === 0) { %>
@@ -164,10 +166,10 @@
                   <% } %>
                 </td>
                 <td class="obs-cell" title="<%= l.Observacao || '' %>">
-                  <%= l.Observacao ? (l.Observacao.length > 30 ? l.Observacao.slice(0,30) + '…' : l.Observacao) : '—' %>
+                  <%= l.Observacao ? (l.Observacao.length > 40 ? l.Observacao.slice(0,40) + '…' : l.Observacao) : '—' %>
                 </td>
                 <td class="text-right text-muted"><%= l.ValorParcela ? formatBRL(l.ValorParcela) : '—' %></td>
-                <td class="text-right font-bold col-desktop <%= l.Tipo === 'Creditar' ? 'text-green' : 'text-red' %>">
+                <td class="text-right font-bold <%= l.Tipo === 'Creditar' ? 'text-green' : 'text-red' %>">
                   <%= formatBRL(l.Valor) %>
                 </td>
                 <td class="text-center actions-cell">
@@ -182,18 +184,85 @@
           </tbody>
           <tfoot>
             <tr class="totals-row">
-              <td colspan="3" class="col-desktop"></td>
-              <td colspan="4" class="text-right text-muted">Totais do mês:</td>
+              <td colspan="6" class="text-right text-muted">Totais do mês:</td>
+              <td></td>
               <td class="text-right font-bold">
                 <span class="text-green">C: <%= formatBRL(totalCreditos) %></span><br/>
                 <span class="text-red">D: <%= formatBRL(totalDebitos) %></span>
               </td>
-              <td class="col-desktop text-right text-muted">—</td>
+              <td class="text-right text-muted">—</td>
               <td></td>
             </tr>
           </tfoot>
         </table>
       </div>
+
+      <!-- Cards Mobile -->
+      <div class="mobile-cards mobile-only">
+        <% lancamentos.forEach(l => { %>
+          <% const { month, year } = parseMesLancamento(l.MesLancamento); %>
+          <div class="m-card <%= l.Tipo === 'Creditar' ? 'm-card-creditar' : 'm-card-debitar' %>">
+            <!-- Cabeçalho do card -->
+            <div class="m-card-header">
+              <span class="badge-tipo <%= l.Tipo === 'Creditar' ? 'badge-creditar' : 'badge-debitar' %>">
+                <%= l.Tipo === 'Creditar' ? '↑ Crédito' : '↓ Débito' %>
+              </span>
+              <span class="m-card-valor <%= l.Tipo === 'Creditar' ? 'text-green' : 'text-red' %>">
+                <%= l.ValorParcela ? formatBRL(l.ValorParcela) : formatBRL(l.Valor) %>
+              </span>
+            </div>
+            <!-- Grade de infos -->
+            <div class="m-card-grid">
+              <div class="m-card-item">
+                <span class="m-label">Parcela</span>
+                <span class="m-value">
+                  <%= l.parcelaAtual %>/<%= l.parcelasTotal %>
+                  <% if (l.parcelasRestantes === 0) { %>
+                    <span class="tag-ultima">última</span>
+                  <% } else { %>
+                    <span class="parcela-rest"><%= l.parcelasRestantes %> rest.</span>
+                  <% } %>
+                </span>
+              </div>
+              <div class="m-card-item">
+                <span class="m-label">Início Pag.</span>
+                <span class="m-value"><%= l.InicioPagamento || '—' %></span>
+              </div>
+              <div class="m-card-item">
+                <span class="m-label">Cartão / Conta</span>
+                <span class="m-value"><%= l.Cartao_ou_Conta || '—' %></span>
+              </div>
+              <div class="m-card-item">
+                <span class="m-label">Grupo</span>
+                <span class="m-value">
+                  <% if (l.Grupo) { %><span class="tag"><%= l.Grupo %></span><% } else { %>—<% } %>
+                </span>
+              </div>
+              <% if (l.Observacao) { %>
+              <div class="m-card-item m-card-item-full">
+                <span class="m-label">Observação</span>
+                <span class="m-value"><%= l.Observacao %></span>
+              </div>
+              <% } %>
+            </div>
+            <!-- Ações -->
+            <div class="m-card-actions">
+              <a href="/lancamentos/<%= l.id %>/editar" class="btn btn-ghost btn-sm">✏ Editar</a>
+              <form method="POST" action="/lancamentos/<%= l.id %>/deletar"
+                    onsubmit="return confirm('Excluir este lançamento?')" style="display:inline">
+                <button type="submit" class="btn btn-sm btn-danger">✕ Excluir</button>
+              </form>
+            </div>
+          </div>
+        <% }) %>
+
+        <!-- Total mobile -->
+        <div class="m-totals">
+          <span class="text-green">Créditos: <%= formatBRL(totalCreditos) %></span>
+          <span class="text-red">Débitos: <%= formatBRL(totalDebitos) %></span>
+        </div>
+      </div>
+
     <% } %>
   </div>
 
