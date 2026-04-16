@@ -252,22 +252,30 @@ a:hover { text-decoration: underline; }
 @media (max-width: 640px) {
   .summary-cards {
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 16px;
+    gap: 6px;
+    margin-bottom: 12px;
   }
 
   .card {
-    padding: 10px 8px;
-    gap: 6px;
+    padding: 8px 6px;
+    gap: 4px;
+    min-width: 0;
+    overflow: hidden;
   }
 
   .card-icon {
-    font-size: 1rem;
-    min-width: 16px;
+    font-size: 0.9rem;
+    min-width: 14px;
+    flex-shrink: 0;
   }
 
-  .card-label { font-size: 0.65rem; }
-  .card-value { font-size: 0.85rem; font-weight: 700; white-space: nowrap; }
+  .card-content {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .card-label { font-size: 0.62rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card-value { font-size: 0.82rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }
 
 .card {
