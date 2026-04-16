@@ -64,8 +64,14 @@
       <%
         const mesesNomesCompletos = ['','Janeiro','Fevereiro','Março','Abril','Maio','Junho',
                                      'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+        const prevMes = filterMes === 1 ? 12 : filterMes - 1;
+        const prevAno = filterMes === 1 ? filterAno - 1 : filterAno;
+        const nextMes = filterMes === 12 ? 1 : filterMes + 1;
+        const nextAno = filterMes === 12 ? filterAno + 1 : filterAno;
       %>
+      <a href="/dashboard?mes=<%= prevMes %>&ano=<%= prevAno %>" class="btn-month-nav" title="Mês anterior">&#9664;</a>
       <span class="period-label"><%= mesesNomesCompletos[filterMes] %> / <%= filterAno %></span>
+      <a href="/dashboard?mes=<%= nextMes %>&ano=<%= nextAno %>" class="btn-month-nav" title="Próximo mês">&#9654;</a>
     </div>
   </div>
 
@@ -120,6 +126,42 @@
         <a href="/lancamentos/novo" class="btn btn-primary">Adicionar primeiro lançamento</a>
       </div>
     <% } else { %>
+      <%
+        const uniqueContas = [...new Set(lancamentos.map(l => l.Cartao_ou_Conta).filter(Boolean))].sort();
+        const uniqueGrupos = [...new Set(lancamentos.map(l => l.Grupo).filter(Boolean))].sort();
+      %>
+      <div class="table-toolbar">
+        <div class="toolbar-filters">
+          <div class="toolbar-filter-group">
+            <label>Conta/Cartão</label>
+            <select id="filterConta">
+              <option value="">Todos</option>
+              <% uniqueContas.forEach(c => { %>
+                <option value="<%= c %>"><%= c %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="toolbar-filter-group">
+            <label>Grupo</label>
+            <select id="filterGrupo">
+              <option value="">Todos</option>
+              <% uniqueGrupos.forEach(g => { %>
+                <option value="<%= g %>"><%= g %></option>
+              <% }) %>
+            </select>
+          </div>
+        </div>
+        <div class="toolbar-cols">
+          <span class="toolbar-cols-label">Colunas:</span>
+          <label class="col-toggle"><input type="checkbox" data-toggle-col="0" checked> Tipo</label>
+          <label class="col-toggle"><input type="checkbox" data-toggle-col="1" checked> Início</label>
+          <label class="col-toggle"><input type="checkbox" data-toggle-col="2" checked> Parc.</label>
+          <label class="col-toggle"><input type="checkbox" data-toggle-col="3" checked> Conta</label>
+          <label class="col-toggle"><input type="checkbox" data-toggle-col="4" checked> Grupo</label>
+          <label class="col-toggle"><input type="checkbox" data-toggle-col="5" checked> Valor</label>
+          <label class="col-toggle"><input type="checkbox" data-toggle-col="6" checked> Obs.</label>
+        </div>
+      </div>
       <div class="table-wrapper">
         <table class="data-table">
           <thead>
@@ -287,6 +329,49 @@
   headers.forEach(function (th) {
     th.addEventListener('click', function () {
       sortTable(parseInt(th.dataset.col));
+    });
+  });
+})();
+
+// ── Filtro por Conta e Grupo ──────────────────────────────────────────────
+(function () {
+  var contaSel = document.getElementById('filterConta');
+  var grupoSel = document.getElementById('filterGrupo');
+  if (!contaSel || !grupoSel) return;
+  var tbody = document.querySelector('.data-table tbody');
+
+  function applyFilters() {
+    var conta = contaSel.value;
+    var grupo = grupoSel.value;
+    Array.from(tbody.querySelectorAll('tr')).forEach(function (tr) {
+      var tds = tr.querySelectorAll('td');
+      var rowConta = tds[3] ? tds[3].innerText.trim() : '';
+      var rowGrupo = tds[4] ? tds[4].innerText.trim() : '';
+      var show = (!conta || rowConta === conta) && (!grupo || rowGrupo.includes(grupo));
+      tr.style.display = show ? '' : 'none';
+    });
+  }
+
+  contaSel.addEventListener('change', applyFilters);
+  grupoSel.addEventListener('change', applyFilters);
+})();
+
+// ── Toggle de colunas ─────────────────────────────────────────────────────
+(function () {
+  var table = document.querySelector('.data-table');
+  if (!table) return;
+  document.querySelectorAll('[data-toggle-col]').forEach(function (cb) {
+    var col = parseInt(cb.dataset.toggleCol);
+    cb.addEventListener('change', function () {
+      var show = cb.checked;
+      // cabeçalho
+      var th = table.querySelector('th[data-col="' + col + '"]');
+      if (th) th.style.display = show ? '' : 'none';
+      // células
+      table.querySelectorAll('tbody tr, tfoot tr').forEach(function (tr) {
+        var td = tr.querySelectorAll('td')[col];
+        if (td) td.style.display = show ? '' : 'none';
+      });
     });
   });
 })();

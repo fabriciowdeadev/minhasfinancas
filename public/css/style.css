@@ -210,11 +210,34 @@ a:hover { text-decoration: underline; }
 
 .filter-group label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
 
+.filter-period {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .period-label {
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--muted);
 }
+
+.btn-month-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.btn-month-nav:hover { background: var(--blue-dim); color: var(--blue); border-color: var(--blue-dim); }
 
 @media (max-width: 640px) {
   .filter-bar {
@@ -239,6 +262,8 @@ a:hover { text-decoration: underline; }
     font-size: 1rem;
     text-align: center;
   }
+
+  .btn-month-nav { width: 28px; height: 28px; font-size: 0.75rem; }
 }
 
 /* ── Summary cards ────────────────────────────────────────────────────────── */
@@ -322,6 +347,82 @@ a:hover { text-decoration: underline; }
 }
 
 .section-header h2 { font-size: 1rem; font-weight: 600; }
+
+/* ── Table toolbar ─────────────────────────────────────────────────────────── */
+.table-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+
+.toolbar-filters {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.toolbar-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.toolbar-filter-group label {
+  font-size: 0.68rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.toolbar-filter-group select {
+  padding: 4px 8px;
+  font-size: 0.82rem;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.toolbar-cols {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.toolbar-cols-label {
+  font-size: 0.68rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-right: 2px;
+}
+
+.col-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.75rem;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+.col-toggle input { cursor: pointer; accent-color: var(--blue); }
+.col-toggle:hover { color: var(--text); }
+
+@media (max-width: 640px) {
+  .table-toolbar { padding: 10px 12px; gap: 8px; }
+  .toolbar-cols { margin-left: 0; }
+  .col-toggle { font-size: 0.7rem; }
+}
 
 .table-wrapper { overflow-x: auto; }
 
