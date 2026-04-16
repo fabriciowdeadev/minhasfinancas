@@ -384,7 +384,8 @@ a:hover { text-decoration: underline; }
   vertical-align: middle;
 }
 
-.data-table tbody tr:hover { background: var(--surface2); }
+.data-table tbody tr:nth-child(even) { background: var(--surface2); }
+.data-table tbody tr:hover { background: rgba(255,255,255,0.06); }
 .data-table tbody tr:last-child td { border-bottom: none; }
 
 .data-table tfoot td {
