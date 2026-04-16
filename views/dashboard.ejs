@@ -129,8 +129,8 @@
               <th data-col="2" class="th-sort">Parc. <span class="sort-icon"></span></th>
               <th data-col="3" class="th-sort">Cartão/Conta <span class="sort-icon"></span></th>
               <th data-col="4" class="th-sort">Grupo <span class="sort-icon"></span></th>
-              <th data-col="5" class="th-sort">Obs. <span class="sort-icon"></span></th>
-              <th data-col="6" class="th-sort text-right">Vlr. Parc. <span class="sort-icon"></span></th>
+              <th data-col="5" class="th-sort text-right">Vlr. Parc. <span class="sort-icon"></span></th>
+              <th data-col="6" class="th-sort">Obs. <span class="sort-icon"></span></th>
               <th class="text-center">Ações</th>
             </tr>
           </thead>
@@ -158,11 +158,11 @@
                     <span class="text-muted">—</span>
                   <% } %>
                 </td>
-                <td class="obs-cell" title="<%= l.Observacao || '' %>">
-                  <%= l.Observacao ? (l.Observacao.length > 40 ? l.Observacao.slice(0,40) + '…' : l.Observacao) : '—' %>
-                </td>
                 <td class="text-right <%= l.Tipo === 'Creditar' ? 'text-green' : 'text-red' %>">
                   <%= l.ValorParcela ? formatBRL(l.ValorParcela) : '—' %>
+                </td>
+                <td class="obs-cell" title="<%= l.Observacao || '' %>">
+                  <%= l.Observacao ? (l.Observacao.length > 40 ? l.Observacao.slice(0,40) + '…' : l.Observacao) : '—' %>
                 </td>
                 <td class="text-center actions-cell">
                   <a href="/lancamentos/<%= l.id %>/editar" class="btn-icon btn-edit" title="Editar">✏</a>
@@ -177,12 +177,12 @@
           <tfoot>
             <tr class="totals-row">
               <td colspan="2" class="hide-mobile"></td>
-              <td colspan="3" class="text-right text-muted">Total:</td>
-              <td></td>
+              <td colspan="2" class="text-right text-muted">Total:</td>
               <td class="text-right font-bold">
                 <span class="text-green">C: <%= formatBRL(totalCreditos) %></span><br/>
                 <span class="text-red">D: <%= formatBRL(totalDebitos) %></span>
               </td>
+              <td></td>
               <td></td>
             </tr>
           </tfoot>
