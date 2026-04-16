@@ -125,14 +125,12 @@
           <thead>
             <tr>
               <th data-col="0" class="th-sort hide-mobile">Tipo <span class="sort-icon"></span></th>
-              <th data-col="1" class="th-sort hide-mobile">Mês <span class="sort-icon"></span></th>
-              <th data-col="2" class="th-sort hide-mobile">Início Pag. <span class="sort-icon"></span></th>
-              <th data-col="3" class="th-sort">Parc. <span class="sort-icon"></span></th>
-              <th data-col="4" class="th-sort">Cartão/Conta <span class="sort-icon"></span></th>
-              <th data-col="5" class="th-sort">Grupo <span class="sort-icon"></span></th>
-              <th data-col="6" class="th-sort">Obs. <span class="sort-icon"></span></th>
-              <th data-col="7" class="th-sort text-right">Vlr. Parc. <span class="sort-icon"></span></th>
-              <th data-col="8" class="th-sort text-right hide-mobile">Vlr. Total <span class="sort-icon"></span></th>
+              <th data-col="1" class="th-sort hide-mobile">Início Pag. <span class="sort-icon"></span></th>
+              <th data-col="2" class="th-sort">Parc. <span class="sort-icon"></span></th>
+              <th data-col="3" class="th-sort">Cartão/Conta <span class="sort-icon"></span></th>
+              <th data-col="4" class="th-sort">Grupo <span class="sort-icon"></span></th>
+              <th data-col="5" class="th-sort">Obs. <span class="sort-icon"></span></th>
+              <th data-col="6" class="th-sort text-right">Vlr. Parc. <span class="sort-icon"></span></th>
               <th class="text-center">Ações</th>
             </tr>
           </thead>
@@ -145,7 +143,6 @@
                     <%= l.Tipo === 'Creditar' ? '↑ Crédito' : '↓ Débito' %>
                   </span>
                 </td>
-                <td class="text-muted hide-mobile"><%= String(month).padStart(2,'0') %>/<%= year %></td>
                 <td class="text-muted hide-mobile"><%= l.InicioPagamento || '—' %></td>
                 <td class="parcela-cell">
                   <span class="parcela-prog"><%= l.parcelaAtual %>/<%= l.parcelasTotal %></span>
@@ -167,9 +164,6 @@
                 <td class="text-right <%= l.Tipo === 'Creditar' ? 'text-green' : 'text-red' %>">
                   <%= l.ValorParcela ? formatBRL(l.ValorParcela) : '—' %>
                 </td>
-                <td class="text-right font-bold hide-mobile <%= l.Tipo === 'Creditar' ? 'text-green' : 'text-red' %>">
-                  <%= formatBRL(l.Valor) %>
-                </td>
                 <td class="text-center actions-cell">
                   <a href="/lancamentos/<%= l.id %>/editar" class="btn-icon btn-edit" title="Editar">✏</a>
                   <form method="POST" action="/lancamentos/<%= l.id %>/deletar"
@@ -182,14 +176,13 @@
           </tbody>
           <tfoot>
             <tr class="totals-row">
-              <td colspan="3" class="hide-mobile"></td>
+              <td colspan="2" class="hide-mobile"></td>
               <td colspan="3" class="text-right text-muted">Total:</td>
               <td></td>
               <td class="text-right font-bold">
                 <span class="text-green">C: <%= formatBRL(totalCreditos) %></span><br/>
                 <span class="text-red">D: <%= formatBRL(totalDebitos) %></span>
               </td>
-              <td class="hide-mobile text-right text-muted">—</td>
               <td></td>
             </tr>
           </tfoot>
